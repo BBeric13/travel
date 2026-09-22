@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>高加索三国 · 阿克套 · 莫斯科 · 2026</title>
+  <meta name="description" content="2026 年 9 月 25 日至 10 月 7 日，三人的高加索行程：航班、地图、逐日安排、记账结算与行前清单。">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>⛰️</text></svg>">
+  <script>
+    /* 首屏就定好深浅色，避免深色模式下闪一下白 */
+    (function () {
+      var mode = 'light';
+      try {
+        var saved = JSON.parse(localStorage.getItem('cg26.theme') || '"auto"');
+        mode = (saved === 'light' || saved === 'dark') ? saved
+          : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } catch (err) { /* 隐私模式下读不到 localStorage，按浅色处理 */ }
+      document.documentElement.setAttribute('data-theme', mode);
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#days">跳到行程</a>
+
+  <header class="hero" id="top">
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <nav class="topbar" aria-label="页面导航">
+      <span class="brand">2026 · CAUCASUS</span>
+      <div class="nav-links">
+        <a href="#overview">概览</a>
+        <a href="#map">地图</a>
+        <a href="#days">行程</a>
+        <a href="#ledger">记账</a>
+        <a href="#checklist">清单</a>
+        <a href="#apps">应用</a>
+        <a href="#safety">保险</a>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换外观模式">自动</button>
+    </nav>
+
+    <div class="hero-inner">
+      <p class="eyebrow">25 SEP — 07 OCT · 13 天 · 三人</p>
+      <h1>高加索三国<br>阿克套 · 莫斯科</h1>
+      <ul class="hero-route" id="hero-route"></ul>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="section" id="overview">
+      <div class="section-head">
+        <p class="eyebrow">概览</p>
+        <h2>从里海，走到高加索山脊</h2>
+        <p class="muted">上海 / 北京 → 西安 → 阿克套 → 巴库 → 第比利斯 → 梅斯蒂亚 → 乌树故里 → 埃里温 → 莫斯科</p>
+      </div>
+      <ul class="facts">
+        <li><b>3</b><span>旅行成员</span></li>
+        <li><b>5</b><span>途经国家</span></li>
+        <li><b>13</b><span>行程天数</span></li>
+        <li><b>8</b><span>交通工具段</span></li>
+      </ul>
+    </section>
+
+    <section class="section" id="map">
+      <div class="section-head">
+        <p class="eyebrow">路线</p>
+        <h2>总览地图</h2>
+        <p class="muted">手绘路线示意：圆点为停留城市，连线上标注两城之间的交通方式。</p>
+      </div>
+      <div class="map-frame">
+        <div class="route-map" id="route-map"></div>
+      </div>
+      <ul class="legend" id="map-legend"></ul>
+    </section>
+
+    <section class="section" id="days">
+      <div class="section-head">
+        <p class="eyebrow">逐日</p>
+        <h2>按天行程</h2>
+        <p class="muted">点击任意一天展开：景点、交通、住宿与预订状态。</p>
+      </div>
+      <div class="day-list" id="day-list"></div>
+    </section>
+
+    <section class="section" id="ledger">
+      <div class="section-head">
+        <p class="eyebrow">记账</p>
+        <h2>记账与结算</h2>
+        <p class="muted">录入时只填金额与货币，按参考汇率自动折算人民币，最后自动给出三人转账建议。</p>
+      </div>
+
+      <div class="ledger-summary">
+        <div><span>总支出</span><b id="ledger-total" class="tnum">¥ 0.00</b></div>
+        <div><span>记录笔数</span><b id="ledger-count" class="tnum">0 笔</b></div>
+        <div><span>同步</span><b id="ledger-sync" class="sync-state">本机</b></div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="记账分区">
+        <button class="tab is-active" id="tab-entry" type="button" role="tab" aria-selected="true" aria-controls="panel-entry">录入</button>
+        <button class="tab" id="tab-flow" type="button" role="tab" aria-selected="false" aria-controls="panel-flow">流水</button>
+        <button class="tab" id="tab-settle" type="button" role="tab" aria-selected="false" aria-controls="panel-settle">结算</button>
+        <button class="tab" id="tab-rates" type="button" role="tab" aria-selected="false" aria-controls="panel-rates">汇率与同步</button>
+      </div>
+
+      <div class="tab-panel" id="panel-entry" role="tabpanel" aria-labelledby="tab-entry">
+        <form id="expense-form" class="expense-form">
+          <div class="field">
+            <label for="exp-date">日期</label>
+            <input id="exp-date" name="date" type="date" value="2026-09-25" required>
+          </div>
+          <div class="field">
+            <label for="exp-payer">付款人</label>
+            <select id="exp-payer" name="payer"></select>
+          </div>
+          <div class="field">
+            <label for="exp-amount">金额</label>
+            <input id="exp-amount" name="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" required>
+          </div>
+          <div class="field">
+            <label for="exp-currency">货币</label>
+            <select id="exp-currency" name="currency"></select>
+          </div>
+          <div class="field field-wide">
+            <label for="exp-note">说明</label>
+            <input id="exp-note" name="note" type="text" placeholder="例如：曼吉斯陶一日游">
+          </div>
+          <div class="field field-wide">
+            <span class="label">分摊方式</span>
+            <div class="radio-row">
+              <label class="chip-radio"><input type="radio" name="splitMode" value="even" checked> 均摊</label>
+              <label class="chip-radio"><input type="radio" name="splitMode" value="custom"> 手动金额</label>
+            </div>
+          </div>
+          <fieldset class="field field-wide members">
+            <legend>分摊人</legend>
+            <div class="member-grid" id="member-split"></div>
+          </fieldset>
+          <p class="hint field-wide" id="rate-hint"></p>
+          <div class="form-actions field-wide">
+            <button class="btn btn-primary" type="submit">保存支出</button>
+            <button class="btn" type="button" id="expense-reset" hidden>取消编辑</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-panel" id="panel-flow" role="tabpanel" aria-labelledby="tab-flow" hidden>
+        <div id="ledger-list" class="ledger-list"></div>
+      </div>
+
+      <div class="tab-panel" id="panel-settle" role="tabpanel" aria-labelledby="tab-settle" hidden>
+        <div class="settle-mode" role="group" aria-label="结算汇率">
+          <button type="button" class="seg is-active" data-settle-rate="record" aria-pressed="true">按记录时汇率</button>
+          <button type="button" class="seg" data-settle-rate="today" aria-pressed="false">按当前汇率</button>
+        </div>
+        <div id="settlement" class="settlement"></div>
+      </div>
+
+      <div class="tab-panel" id="panel-rates" role="tabpanel" aria-labelledby="tab-rates" hidden>
+        <div class="card">
+          <h3>参考汇率（1 单位 → 人民币）</h3>
+          <p class="muted small">换算用的汇率。可以在出发前统一更新一次，也可以在路上随时改。</p>
+          <div class="rate-grid" id="rate-grid"></div>
+          <div class="form-actions">
+            <button class="btn" type="button" id="rate-fetch">联网更新汇率</button>
+            <button class="btn" type="button" id="rate-reset">恢复默认</button>
+          </div>
+          <p class="hint" id="rate-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="card">
+          <h3>三人同步</h3>
+          <p class="muted small">默认只存在本机。填好后，<b>记账与各自的清单</b>都会自动合并，每 15 秒互相对齐一次。</p>
+          <div class="field">
+            <label for="sync-url">后端地址（页面已部署在同域名时可留空）</label>
+            <input id="sync-url" type="url" placeholder="https://你的-worker.workers.dev">
+          </div>
+          <div class="field">
+            <label for="sync-code">行程码</label>
+            <input id="sync-code" type="text" placeholder="例如 caucasus-2026">
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="button" id="sync-save">保存并同步</button>
+            <button class="btn" type="button" id="sync-off">断开同步</button>
+          </div>
+          <p class="hint" id="sync-status" role="status" aria-live="polite"></p>
+          <details class="details">
+            <summary>怎么搭这个后端（约 5 分钟，不用装任何工具）</summary>
+            <ol class="muted small">
+              <li>Cloudflare 后台 → Workers &amp; Pages → 新建 Worker，把 <code>worker.js</code> 整段粘贴进去并部署。</li>
+              <li>在 Workers &amp; Pages 里新建一个 KV 命名空间，回到 Worker 的 Settings → Bindings 绑定它，变量名填 <code>TRIPS</code>。</li>
+              <li>把 Worker 地址（形如 <code>https://xxx.workers.dev</code>）填到上面。</li>
+              <li>三个人填同一个行程码即可；行程码就是这趟行程的共享钥匙。</li>
+            </ol>
+          </details>
+          <div class="form-actions">
+            <button class="btn" type="button" id="data-export">导出 JSON</button>
+            <button class="btn" type="button" id="data-import">导入 JSON</button>
+          </div>
+          <p class="hint" id="data-status" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="checklist">
+      <div class="section-head">
+        <p class="eyebrow">清单</p>
+        <h2>Check List</h2>
+        <p class="muted">每人一份：先选自己，再勾自己的东西。打开同步后，各自的勾选会分别合并，互不覆盖。</p>
+      </div>
+      <div class="check-toolbar">
+        <div class="segmented" id="person-switch" role="group" aria-label="这是谁的清单"></div>
+        <button class="btn" type="button" id="expand-all">全部展开</button>
+        <button class="btn" type="button" id="collapse-all">全部收起</button>
+        <span class="progress-text" id="check-progress" aria-live="polite"></span>
+        <div class="progress"><div class="progress-bar" id="check-bar" style="width:0%"></div></div>
+      </div>
+      <p class="hint" id="check-note"></p>
+      <div class="check-list" id="check-list"></div>
+      <p class="hint"><button class="link-btn" type="button" id="check-reset">清空当前成员的勾选</button></p>
+    </section>
+
+    <section class="section" id="apps">
+      <div class="section-head">
+        <p class="eyebrow">应用</p>
+        <h2>App 清单</h2>
+        <p class="muted">按用途分类；有官网的可以直接打开。</p>
+      </div>
+      <div class="app-grid" id="app-list"></div>
+    </section>
+
+    <section class="section" id="safety">
+      <div class="section-head">
+        <p class="eyebrow">保险与紧急</p>
+        <h2>保险与紧急联系</h2>
+        <p class="muted">平铺展示，不需要展开；带输入框的内容填写后保存在本机。</p>
+      </div>
+      <div class="safety-grid" id="safety-grid"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <details class="details">
+      <summary>图片来源与授权</summary>
+      <ul class="muted small" id="credits"></ul>
+    </details>
+  </footer>
+
+  <button class="to-top" id="to-top" type="button" aria-label="回到顶部" hidden>
+    <span aria-hidden="true">↑</span> 顶部
+  </button>
+
+  <script src="map-geo.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
